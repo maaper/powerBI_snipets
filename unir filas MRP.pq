@@ -33,7 +33,15 @@ let
     // Combinar el contenido de la fila 1 propagada y la fila 2 solo si hay valor en la fila 1
     CombinarFilas = List.Transform(
         List.Zip({ListaRellenada, Fila2}),
-        each if _{0} <> null and _{0} <> "" then Text.From(_{0}) & "_" & Text.From(_{1}) else Text.From(_{1})
+        each 
+            if _{0} <> null and _{0} <> "" then 
+                // Verifica si el valor de la segunda parte comienza con BB o Sacos
+                if Text.StartsWith(Text.From(_{1}), "BB") or Text.StartsWith(Text.From(_{1}), "SACOS") then
+                    Text.From(_{0}) & "_" & "Consumo " & Text.From(_{1}) // Añadir "Consumo" antes del valor de la segunda fila
+                else 
+                    Text.From(_{0}) & "_" & Text.From(_{1}) // Caso normal
+            else 
+                Text.From(_{1}) // Si la primera parte es nula, solo tomar la segunda parte
     ),
 
     // Crear una tabla con la fila combinada
